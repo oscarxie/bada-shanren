@@ -1,5 +1,12 @@
 const asset = (name) => "assets/" + name + ".webp";
 const byId = (id) => document.getElementById(id);
+const museumNames = new Map([
+  ["www.dpm.org.cn", "北京故宫博物院"],
+  ["www.shanghaimuseum.cn", "上海博物馆"],
+  ["www.tjbwg.cn", "天津博物馆"],
+  ["www.metmuseum.org", "大都会艺术博物馆"],
+  ["www.bdsrjng.cn", "八大山人纪念馆"],
+]);
 
 const lookButtons = [...document.querySelectorAll("[data-look]")];
 lookButtons.forEach((button, index) => {
@@ -86,9 +93,8 @@ function openWork(work, trigger) {
   byId("work-tips").replaceChildren(...tips);
   const source = byId("work-source");
   source.href = work.source;
-  source.textContent = work.source.startsWith(beijingPalaceMuseum)
-    ? "查看北京故宫博物院藏品资料"
-    : "查看馆方资料";
+  const museum = museumNames.get(new URL(work.source).hostname);
+  source.textContent = museum ? "查看" + museum + "藏品资料" : "查看馆方资料";
   const extra = byId("work-extra");
   extra.hidden = !work.extra;
   if (work.extra) {
