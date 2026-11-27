@@ -63,44 +63,6 @@
     </div>
   </section>
 
-  <section id="looking" class="section shell" aria-labelledby="looking-title">
-    <div class="section-head"><div><p class="eyebrow">怎么看</p><h2 id="looking-title">你的视线先落在哪里？</h2></div><p>从整张画的黑白分布，看进一根线、几层墨和一个眼神。最后，读一读角落里的署名。</p></div>
-    <div class="looking-layout">
-      <figure class="looking-art"><img id="look-image" src="assets/lotus-bird.webp" alt="《荷石水鸟图》全幅" loading="lazy"><figcaption id="look-caption">荷石水鸟图 · 全幅</figcaption></figure>
-      <div class="looking-copy">
-        <div class="look-controls" role="group" aria-label="选一个细节来观察">
-          <button type="button" data-look="0" aria-pressed="true">看全幅</button><button type="button" data-look="1" aria-pressed="false">看荷茎</button><button type="button" data-look="2" aria-pressed="false">看墨色</button><button type="button" data-look="3" aria-pressed="false">看鸟眼</button><button type="button" data-look="4" aria-pressed="false">看款印</button>
-        </div>
-        <div id="look-story" aria-live="polite"><h3 id="look-title">空白也在安排视线</h3><p id="look-text">先找画上最重的几团墨。荷叶和石头之间隔着大片空白，细长的荷茎把上下连起来。试着顺着茎走一遍，再回到石顶的小鸟。</p></div>
-        <button type="button" class="text-button" data-work="lotus">阅读这件作品</button>
-      </div>
-    </div>
-    <section class="reading-module" aria-labelledby="technique-title">
-      <h3 id="technique-title">笔、墨、水、位</h3>
-      <dl class="reading-grid">
-        <div>
-          <dt>笔 · 线与墨面是怎么画的</dt>
-          <dd>笔尖大致在线条中央运行叫中锋，画出的线圆劲有力。把笔杆放斜，让笔毫侧面接触纸面，就是侧锋，能一次扫出一片墨面。对照《荷石水鸟图》里的细长荷茎和宽阔荷叶，就能看出两种笔路。</dd>
-        </div>
-        <div>
-          <dt>墨 · 为什么雁背看起来柔软</dt>
-          <dd>先用淡墨晕出雁背，趁墨迹未干点上浓墨。两层墨在边缘相融，留下细密的绒羽质感。这是破墨的一种做法。</dd>
-          <dd><button type="button" class="text-button" data-work="reeds">查看《芦雁图》全幅和局部</button></dd>
-        </div>
-        <div>
-          <dt>水 · 同一卷里有湿笔也有干笔</dt>
-          <dd>笔里水分多，落纸后墨会向外洇开。笔里水分少，纸面更容易留下干涩断续的笔痕。《河上花图》里湿润的荷叶和偏干的坡石可放在一起看。</dd>
-          <dd><button type="button" class="text-button" data-work="river">对照《河上花图》的荷叶和坡石</button></dd>
-        </div>
-        <div>
-          <dt>位 · 空白也有位置</dt>
-          <dd>留白能隔开墨块，也能让两处景物隔空相对。《秋林独钓图》中，两岸之间那片白成了水面，细小的钓者让人感觉到水域的开阔。</dd>
-          <dd><button type="button" class="text-button" data-work="fishing">看《秋林独钓图》的两岸</button></dd>
-        </div>
-      </dl>
-    </section>
-  </section>
-
   <section id="person" class="section biography" aria-labelledby="person-title">
     <div class="shell">
       <div class="section-head"><div><p class="eyebrow">其人</p><h2 id="person-title">朱耷的一生</h2></div><p>明代宗室后裔、禅门中的传綮、署名「八大山人」的书画家。几个名字，留下了他在不同岁月里的踪迹。</p></div>
@@ -163,45 +125,85 @@
     </div>
   </section>
 
-  <section id="works" class="section shell" aria-labelledby="works-title">
-    <div class="section-head"><div><p class="eyebrow">书画作品</p><h2 id="works-title">从十四件作品读起</h2></div><p>立轴先看全幅，手卷逐段读，册页和手札按开翻阅。选一件，看看笔墨与文字怎样留住他的日常。</p></div>
-    <div class="filters" role="group" aria-label="按作品类别筛选"><button type="button" data-filter="全部" aria-pressed="true">全部</button><button type="button" data-filter="花鸟" aria-pressed="false">花鸟</button><button type="button" data-filter="山水" aria-pressed="false">山水</button><button type="button" data-filter="书法与手札" aria-pressed="false">书法与手札</button><button type="button" data-filter="人物" aria-pressed="false">人物</button></div>
-    <p id="filter-status" class="sr-only" role="status"></p>
-    <div id="work-grid" class="work-grid"></div>
-    <noscript><p>启用 JavaScript 可筛选书画并查看作品图版。</p></noscript>
-    <section class="reading-module" aria-labelledby="formats-title">
-      <h3 id="formats-title">一册一轴，怎样对照看</h3>
+  <section id="works" class="section works" aria-labelledby="works-title">
+    <div class="shell">
+      <div class="section-head"><div><p class="eyebrow">书画作品</p><h2 id="works-title">从十四件作品读起</h2></div><p>立轴先看全幅，手卷逐段读，册页和手札按开翻阅。选一件，看看笔墨与文字怎样留住他的日常。</p></div>
+      <div class="filters" role="group" aria-label="按作品类别筛选"><button type="button" data-filter="全部" aria-pressed="true">全部</button><button type="button" data-filter="花鸟" aria-pressed="false">花鸟</button><button type="button" data-filter="山水" aria-pressed="false">山水</button><button type="button" data-filter="书法与手札" aria-pressed="false">书法与手札</button><button type="button" data-filter="人物" aria-pressed="false">人物</button></div>
+      <p id="filter-status" class="sr-only" role="status"></p>
+      <div id="work-grid" class="work-grid"></div>
+      <noscript><p>启用 JavaScript 可筛选书画并查看作品图版。</p></noscript>
+      <section class="reading-module" aria-labelledby="formats-title">
+        <h3 id="formats-title">一册一轴，怎样对照看</h3>
+        <dl class="reading-grid">
+          <div>
+            <dt>册页 · 逐开看变化</dt>
+            <dd>翻看《书画册》，留意题材换页后，墨迹的位置和分量怎样跟着变。每开先找最浓的一笔，再看它周围留了多少空白。</dd>
+            <dd><button type="button" class="text-button" data-work="shanghai-album">翻阅《书画册》</button></dd>
+          </div>
+          <div>
+            <dt>立轴 · 先看全幅，再看石</dt>
+            <dd>看《湖石双鸟图轴》，先找石尖和石旁各有一只鸟，再沿石的轮廓往下看，留意几道圆转的笔痕怎样写出石面起伏。</dd>
+            <dd><button type="button" class="text-button" data-work="rock-birds">看《湖石双鸟图轴》</button></dd>
+          </div>
+        </dl>
+      </section>
+      <section class="reading-module" aria-labelledby="calligraphy-title">
+        <h3 id="calligraphy-title">朱耷的书法怎样变了</h3>
+        <p class="reading-intro">他取法王献之、颜真卿，也从欧阳询、黄庭坚和董其昌的书法中吸收不同笔法。沿着早、中、晚三段看，可以观察到字形和笔势的变化。</p>
+        <dl class="reading-grid three-columns">
+          <div>
+            <dt>早期 · 笔势向外伸展</dt>
+            <dd>《传綮写生册》的题字可以看到不同书体。留意某些字的长撇、长捺和倾斜的站姿，笔势常向字外展开。</dd>
+            <dd><a href="https://theme.npm.edu.tw/Academic/ChineseArtDownload.ashx?bid=10135&amp;eid=0" target="_blank" rel="noopener noreferrer">《传綮写生册》研究 · 台北故宫博物院</a></dd>
+          </div>
+          <div>
+            <dt>中期 · 转折逐渐圆浑</dt>
+            <dd>1688 年的《西园雅集图记》可用来观察这个变化。留意转角处，笔势常顺势转过去，较少突然顿住。</dd>
+            <dd><button type="button" class="text-button" data-work="calligraphy">细看《西园雅集图记》</button></dd>
+          </div>
+          <div>
+            <dt>晚期 · 平正疏朗</dt>
+            <dd>字形趋于平稳，线条圆厚，字与字之间留有空隙。看《兰亭序》轴，除了字形和行距，还能看到他怎样自己选录旧文，例如「暮春」后省去「之初」。</dd>
+            <dd><button type="button" class="text-button" data-work="lanting">细看行书《兰亭序》</button></dd>
+          </div>
+        </dl>
+      </section>
+    </div>
+  </section>
+
+  <section id="looking" class="section shell" aria-labelledby="looking-title">
+    <div class="section-head"><div><p class="eyebrow">怎么看</p><h2 id="looking-title">你的视线先落在哪里？</h2></div><p>从整张画的黑白分布，看进一根线、几层墨和一个眼神。最后，读一读角落里的署名。</p></div>
+    <div class="looking-layout">
+      <figure class="looking-art"><img id="look-image" src="assets/lotus-bird.webp" alt="《荷石水鸟图》全幅" loading="lazy"><figcaption id="look-caption">荷石水鸟图 · 全幅</figcaption></figure>
+      <div class="looking-copy">
+        <div class="look-controls" role="group" aria-label="选一个细节来观察">
+          <button type="button" data-look="0" aria-pressed="true">看全幅</button><button type="button" data-look="1" aria-pressed="false">看荷茎</button><button type="button" data-look="2" aria-pressed="false">看墨色</button><button type="button" data-look="3" aria-pressed="false">看鸟眼</button><button type="button" data-look="4" aria-pressed="false">看款印</button>
+        </div>
+        <div id="look-story" aria-live="polite"><h3 id="look-title">空白也在安排视线</h3><p id="look-text">先找画上最重的几团墨。荷叶和石头之间隔着大片空白，细长的荷茎把上下连起来。试着顺着茎走一遍，再回到石顶的小鸟。</p></div>
+        <button type="button" class="text-button" data-work="lotus">阅读这件作品</button>
+      </div>
+    </div>
+    <section class="reading-module" aria-labelledby="technique-title">
+      <h3 id="technique-title">笔、墨、水、位</h3>
       <dl class="reading-grid">
         <div>
-          <dt>册页 · 逐开看变化</dt>
-          <dd>翻看《书画册》，留意题材换页后，墨迹的位置和分量怎样跟着变。每开先找最浓的一笔，再看它周围留了多少空白。</dd>
-          <dd><button type="button" class="text-button" data-work="shanghai-album">翻阅《书画册》</button></dd>
+          <dt>笔 · 线与墨面是怎么画的</dt>
+          <dd>笔尖大致在线条中央运行叫中锋，画出的线圆劲有力。把笔杆放斜，让笔毫侧面接触纸面，就是侧锋，能一次扫出一片墨面。对照《荷石水鸟图》里的细长荷茎和宽阔荷叶，就能看出两种笔路。</dd>
         </div>
         <div>
-          <dt>立轴 · 先看全幅，再看石</dt>
-          <dd>看《湖石双鸟图轴》，先找石尖和石旁各有一只鸟，再沿石的轮廓往下看，留意几道圆转的笔痕怎样写出石面起伏。</dd>
-          <dd><button type="button" class="text-button" data-work="rock-birds">看《湖石双鸟图轴》</button></dd>
-        </div>
-      </dl>
-    </section>
-    <section class="reading-module" aria-labelledby="calligraphy-title">
-      <h3 id="calligraphy-title">朱耷的书法怎样变了</h3>
-      <p class="reading-intro">他取法王献之、颜真卿，也从欧阳询、黄庭坚和董其昌的书法中吸收不同笔法。沿着早、中、晚三段看，可以观察到字形和笔势的变化。</p>
-      <dl class="reading-grid three-columns">
-        <div>
-          <dt>早期 · 笔势向外伸展</dt>
-          <dd>《传綮写生册》的题字可以看到不同书体。留意某些字的长撇、长捺和倾斜的站姿，笔势常向字外展开。</dd>
-          <dd><a href="https://theme.npm.edu.tw/Academic/ChineseArtDownload.ashx?bid=10135&amp;eid=0" target="_blank" rel="noopener noreferrer">《传綮写生册》研究 · 台北故宫博物院</a></dd>
+          <dt>墨 · 为什么雁背看起来柔软</dt>
+          <dd>先用淡墨晕出雁背，趁墨迹未干点上浓墨。两层墨在边缘相融，留下细密的绒羽质感。这是破墨的一种做法。</dd>
+          <dd><button type="button" class="text-button" data-work="reeds">查看《芦雁图》全幅和局部</button></dd>
         </div>
         <div>
-          <dt>中期 · 转折逐渐圆浑</dt>
-          <dd>1688 年的《西园雅集图记》可用来观察这个变化。留意转角处，笔势常顺势转过去，较少突然顿住。</dd>
-          <dd><button type="button" class="text-button" data-work="calligraphy">细看《西园雅集图记》</button></dd>
+          <dt>水 · 同一卷里有湿笔也有干笔</dt>
+          <dd>笔里水分多，落纸后墨会向外洇开。笔里水分少，纸面更容易留下干涩断续的笔痕。《河上花图》里湿润的荷叶和偏干的坡石可放在一起看。</dd>
+          <dd><button type="button" class="text-button" data-work="river">对照《河上花图》的荷叶和坡石</button></dd>
         </div>
         <div>
-          <dt>晚期 · 平正疏朗</dt>
-          <dd>字形趋于平稳，线条圆厚，字与字之间留有空隙。看《兰亭序》轴，除了字形和行距，还能看到他怎样自己选录旧文，例如「暮春」后省去「之初」。</dd>
-          <dd><button type="button" class="text-button" data-work="lanting">细看行书《兰亭序》</button></dd>
+          <dt>位 · 空白也有位置</dt>
+          <dd>留白能隔开墨块，也能让两处景物隔空相对。《秋林独钓图》中，两岸之间那片白成了水面，细小的钓者让人感觉到水域的开阔。</dd>
+          <dd><button type="button" class="text-button" data-work="fishing">看《秋林独钓图》的两岸</button></dd>
         </div>
       </dl>
     </section>
