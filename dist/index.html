@@ -257,9 +257,39 @@
     <div class="dialog-bar"><p id="work-category" class="eyebrow"></p><form method="dialog"><button class="close" aria-label="关闭作品详情" autofocus>关闭</button></form></div>
     <h2 id="work-title"></h2><p id="work-meta" class="work-meta"></p>
     <div class="dialog-layout">
-      <div><figure class="detail-art" id="detail-art"><img id="detail-image" alt=""><figcaption id="detail-caption" aria-live="polite"></figcaption></figure><div class="pager" id="detail-pager" aria-label="图版切换"><button type="button" id="detail-prev">上一图</button><span id="detail-position" aria-live="polite"></span><button type="button" id="detail-next">下一图</button></div></div>
+      <div>
+        <figure class="detail-art" id="detail-art">
+          <img id="detail-image" alt="">
+          <div class="detail-caption-row">
+            <figcaption id="detail-caption" aria-live="polite"></figcaption>
+            <button type="button" class="zoom-button" id="detail-zoom" hidden>放大细看</button>
+          </div>
+        </figure>
+        <div class="pager" id="detail-pager" aria-label="图版切换"><button type="button" id="detail-prev">上一图</button><span id="detail-position" aria-live="polite"></span><button type="button" id="detail-next">下一图</button></div>
+      </div>
       <div><p id="work-note"></p><h3>从这里看</h3><ol id="work-tips"></ol><a id="work-source" target="_blank" rel="noopener noreferrer">查看馆方资料</a><a id="work-extra" target="_blank" rel="noopener noreferrer" hidden></a></div>
     </div>
+  </div>
+</dialog>
+
+<dialog id="lightbox-dialog" class="lightbox" aria-labelledby="lightbox-caption">
+  <div class="lightbox-bar">
+    <div class="lightbox-meta">
+      <p id="lightbox-caption" class="lightbox-caption" aria-live="polite"></p>
+      <span id="lightbox-position" class="lightbox-position" aria-live="polite"></span>
+    </div>
+    <div class="lightbox-actions">
+      <button type="button" id="lightbox-zoom" class="lightbox-btn">原寸 1:1</button>
+      <button type="button" id="lightbox-close" class="lightbox-btn" aria-label="关闭放大视图">关闭</button>
+    </div>
+  </div>
+  <div class="lightbox-stage" id="lightbox-stage">
+    <img id="lightbox-image" alt="" draggable="false">
+  </div>
+  <div class="lightbox-nav" id="lightbox-nav" aria-label="放大视图图版切换">
+    <button type="button" id="lightbox-prev" class="lightbox-btn">上一图</button>
+    <p class="lightbox-hint" id="lightbox-hint" aria-live="polite"></p>
+    <button type="button" id="lightbox-next" class="lightbox-btn">下一图</button>
   </div>
 </dialog>
 </body>
