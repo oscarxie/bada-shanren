@@ -182,7 +182,7 @@
   <section id="looking" class="section shell" aria-labelledby="looking-title">
     <div class="section-head"><div><p class="eyebrow">怎么看</p><h2 id="looking-title">你的视线先落在哪里？</h2></div><p>从整张画的黑白分布，看进一根线、几层墨和一个眼神。最后，读一读角落里的署名。</p></div>
     <div class="looking-layout">
-      <figure class="looking-art"><img id="look-image" src="assets/lotus-bird.webp" alt="《荷石水鸟图》全幅" loading="lazy" decoding="async"><figcaption id="look-caption">荷石水鸟图 · 全幅</figcaption></figure>
+      <figure class="looking-art"><img id="look-image" src="assets/lotus-bird.webp" alt="《荷石水鸟图》全幅" loading="lazy" decoding="async"><span class="image-status" role="status"></span><figcaption id="look-caption">荷石水鸟图 · 全幅</figcaption></figure>
       <div class="looking-copy">
         <div class="look-controls" role="group" aria-label="选一个细节来观察">
           <button type="button" data-look="0" aria-pressed="true">看全幅</button><button type="button" data-look="1" aria-pressed="false">看荷茎</button><button type="button" data-look="2" aria-pressed="false">看墨色</button><button type="button" data-look="3" aria-pressed="false">看鸟眼</button><button type="button" data-look="4" aria-pressed="false">看款印</button>
@@ -270,6 +270,7 @@
       <div>
         <figure class="detail-art" id="detail-art">
           <img id="detail-image" alt="">
+          <span class="image-status" role="status"></span>
           <div class="detail-caption-row">
             <figcaption id="detail-caption" aria-live="polite"></figcaption>
             <button type="button" class="zoom-button" id="detail-zoom" hidden>放大细看</button>
@@ -295,6 +296,7 @@
   </div>
   <div class="lightbox-stage" id="lightbox-stage">
     <img id="lightbox-image" alt="" draggable="false">
+    <span class="image-status" role="status"></span>
   </div>
   <div class="lightbox-nav" id="lightbox-nav" aria-label="放大视图图版切换">
     <button type="button" id="lightbox-prev" class="lightbox-btn">上一图</button>

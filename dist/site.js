@@ -17,6 +17,17 @@ function preloadAsset(name) {
   preloader.src = asset(name);
 }
 
+const imageStatusMessages = {
+  loading: "图版加载中…",
+  error: "图版加载失败，请稍后再试。",
+  ready: "",
+};
+function setImageStatus(container, state) {
+  container.classList.toggle("is-loading", state === "loading");
+  container.classList.toggle("has-image-error", state === "error");
+  container.querySelector(".image-status").textContent = imageStatusMessages[state];
+}
+
 let imageLoadCounter = 0;
 function swapImage(imgEl, containerEl, name, alt, onReady) {
   const targetSrc = asset(name);
@@ -24,39 +35,30 @@ function swapImage(imgEl, containerEl, name, alt, onReady) {
   imgEl.dataset.loadToken = token;
   imgEl.alt = alt;
 
-  const finish = () => {
+  const finish = (loaded) => {
     if (imgEl.dataset.loadToken !== token) return;
-    containerEl.classList.remove("is-loading");
-    onReady?.();
+    setImageStatus(containerEl, loaded ? "ready" : "error");
+    if (loaded) onReady?.();
   };
 
   if (imgEl.getAttribute("src") === targetSrc && imgEl.complete && imgEl.naturalWidth > 0) {
-    finish();
+    finish(true);
     return;
   }
 
-  containerEl.classList.add("is-loading");
+  setImageStatus(containerEl, "loading");
   imgEl.src = targetSrc;
-
-  if (imgEl.complete && imgEl.naturalWidth > 0) {
-    finish();
-    return;
-  }
-
-  const handleLoad = () => {
-    if (imgEl.dataset.loadToken !== token) return;
-    if (typeof imgEl.decode === "function") {
-      imgEl.decode().catch(() => {}).finally(finish);
-    } else {
-      finish();
-    }
-  };
-  imgEl.addEventListener("load", handleLoad, { once: true });
-  imgEl.addEventListener("error", finish, { once: true });
+  imgEl.decode().then(() => finish(true), () => finish(false));
 }
 
 const lookImage = byId("look-image");
 const lookArt = lookImage.closest(".looking-art");
+function reportInitialLookImageError() {
+  if (!lookImage.dataset.loadToken) setImageStatus(lookArt, "error");
+}
+lookImage.addEventListener("error", reportInitialLookImageError, { once: true });
+if (lookImage.complete && !lookImage.naturalWidth) reportInitialLookImageError();
+
 const lookButtons = [...document.querySelectorAll("[data-look]")];
 let lookPreloaded = false;
 function preloadLookFrames() {
@@ -235,7 +237,9 @@ function syncLightboxFrame() {
   lightboxNext.hidden = !multi;
   lightboxPrev.disabled = activeFrame === 0;
   lightboxNext.disabled = activeFrame === activeWork.frames.length - 1;
+  canUseActual = false;
   lightboxZoom.hidden = true;
+  lightboxHint.textContent = "";
   swapImage(lightboxImage, lightboxStage, name, caption, syncLightboxScale);
   preloadAdjacentFrames(activeWork, activeFrame);
 }
@@ -335,7 +339,8 @@ lightboxNext.addEventListener("click", () => {
 let dragState = null;
 let suppressClick = false;
 lightboxStage.addEventListener("pointerdown", (event) => {
-  if (!isActualSize || event.pointerType !== "mouse" || event.button !== 0) return;
+  suppressClick = false;
+  if (!isActualSize || event.target !== lightboxImage || event.pointerType !== "mouse" || event.button !== 0) return;
   dragState = {
     id: event.pointerId,
     x: event.clientX,
@@ -344,7 +349,7 @@ lightboxStage.addEventListener("pointerdown", (event) => {
     top: lightboxStage.scrollTop,
     moved: false,
   };
-  lightboxStage.setPointerCapture(event.pointerId);
+  lightboxImage.setPointerCapture(event.pointerId);
 });
 lightboxStage.addEventListener("pointermove", (event) => {
   if (!dragState || event.pointerId !== dragState.id) return;
@@ -363,8 +368,8 @@ function endDrag(event) {
   if (!dragState || event.pointerId !== dragState.id) return;
   if (dragState.moved) suppressClick = true;
   lightboxStage.classList.remove("is-dragging");
-  if (lightboxStage.hasPointerCapture(event.pointerId)) {
-    lightboxStage.releasePointerCapture(event.pointerId);
+  if (lightboxImage.hasPointerCapture(event.pointerId)) {
+    lightboxImage.releasePointerCapture(event.pointerId);
   }
   dragState = null;
 }
@@ -443,18 +448,27 @@ dialog.addEventListener("click", (event) => {
   }
 });
 dialog.addEventListener("close", () => {
+  if (dialog.open) return;
   clearWorkHash();
   opener?.focus({ preventScroll: true });
 });
 
 function syncWorkFromHash() {
-  if (!location.hash.startsWith("#work=")) {
+  let work;
+  if (location.hash.startsWith("#work=")) {
+    try {
+      const workId = decodeURIComponent(location.hash.slice(6));
+      work = works.find((item) => item.id === workId);
+    } catch {
+      // Treat malformed percent escapes like an unknown work ID.
+    }
+  }
+  if (!work) {
+    clearWorkHash();
+    if (lightbox.open) lightbox.close();
     if (dialog.open) dialog.close();
     return;
   }
-  const workId = decodeURIComponent(location.hash.slice(6));
-  const work = works.find((item) => item.id === workId);
-  if (!work) return;
   if (dialog.open && activeWork?.id === work.id) return;
   const fallbackTrigger = document.querySelector('[data-work="' + work.id + '"]');
   openWork(work, fallbackTrigger);

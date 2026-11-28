@@ -816,12 +816,15 @@ body:has(dialog[open]) {
   transition: opacity .16s ease;
 }
 
-.looking-art.is-loading img,.detail-art.is-loading img,.lightbox-stage.is-loading #lightbox-image {
+:is(.looking-art,.detail-art,.lightbox-stage).is-loading img {
   opacity: 0;
 }
 
-.looking-art.is-loading::after,.detail-art.is-loading::after,.lightbox-stage.is-loading::after {
-  content: "图版加载中…";
+:is(.looking-art,.detail-art,.lightbox-stage).has-image-error img {
+  visibility: hidden;
+}
+
+.image-status {
   position: absolute;
   inset: 0;
   display: grid;
@@ -832,7 +835,7 @@ body:has(dialog[open]) {
   pointer-events: none;
 }
 
-.lightbox-stage.is-loading::after {
+.lightbox-stage .image-status {
   color: #c9bfa9;
 }
 
