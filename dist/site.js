@@ -8,14 +8,72 @@ const museumNames = new Map([
   ["www.bdsrjng.cn", "八大山人纪念馆"],
 ]);
 
+const preloadedAssets = new Set();
+function preloadAsset(name) {
+  if (!name || preloadedAssets.has(name)) return;
+  preloadedAssets.add(name);
+  const preloader = new Image();
+  preloader.decoding = "async";
+  preloader.src = asset(name);
+}
+
+let imageLoadCounter = 0;
+function swapImage(imgEl, containerEl, name, alt, onReady) {
+  const targetSrc = asset(name);
+  const token = String(++imageLoadCounter);
+  imgEl.dataset.loadToken = token;
+  imgEl.alt = alt;
+
+  const finish = () => {
+    if (imgEl.dataset.loadToken !== token) return;
+    containerEl.classList.remove("is-loading");
+    onReady?.();
+  };
+
+  if (imgEl.getAttribute("src") === targetSrc && imgEl.complete && imgEl.naturalWidth > 0) {
+    finish();
+    return;
+  }
+
+  containerEl.classList.add("is-loading");
+  imgEl.src = targetSrc;
+
+  if (imgEl.complete && imgEl.naturalWidth > 0) {
+    finish();
+    return;
+  }
+
+  const handleLoad = () => {
+    if (imgEl.dataset.loadToken !== token) return;
+    if (typeof imgEl.decode === "function") {
+      imgEl.decode().catch(() => {}).finally(finish);
+    } else {
+      finish();
+    }
+  };
+  imgEl.addEventListener("load", handleLoad, { once: true });
+  imgEl.addEventListener("error", finish, { once: true });
+}
+
+const lookImage = byId("look-image");
+const lookArt = lookImage.closest(".looking-art");
 const lookButtons = [...document.querySelectorAll("[data-look]")];
-lookButtons.forEach((button, index) => {
+let lookPreloaded = false;
+function preloadLookFrames() {
+  if (lookPreloaded) return;
+  lookPreloaded = true;
+  lotusFrames.forEach(([name]) => preloadAsset(name));
+}
+lookButtons.forEach((button) => {
+  button.addEventListener("pointerenter", preloadLookFrames, { once: true });
+  button.addEventListener("focus", preloadLookFrames, { once: true });
   button.addEventListener("click", () => {
+    preloadLookFrames();
+    const index = Number(button.dataset.look);
     lookButtons.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
     const [name, caption] = lotusFrames[index];
     const [title, story] = looking[index];
-    byId("look-image").src = asset(name);
-    byId("look-image").alt = caption;
+    swapImage(lookImage, lookArt, name, caption);
     byId("look-caption").textContent = caption;
     byId("look-title").textContent = title;
     byId("look-text").textContent = story;
@@ -60,6 +118,7 @@ filters.forEach((button) => button.addEventListener("click", () => {
 showWorks("全部");
 
 const dialog = byId("work-dialog");
+const detailArt = byId("detail-art");
 const image = byId("detail-image");
 const detailZoom = byId("detail-zoom");
 const previous = byId("detail-prev");
@@ -91,6 +150,7 @@ function isDetailZoomable() {
 }
 
 function syncDetailZoom() {
+  if (detailArt.classList.contains("is-loading")) return;
   const zoomable = isDetailZoomable();
   detailZoom.hidden = !zoomable;
   image.classList.toggle("is-zoomable", zoomable);
@@ -137,7 +197,7 @@ function updateLightboxHint() {
 }
 
 function syncLightboxScale() {
-  if (!lightbox.open || !lightboxImage.naturalWidth) return;
+  if (!lightbox.open || lightboxStage.classList.contains("is-loading") || !lightboxImage.naturalWidth) return;
   const style = getComputedStyle(lightboxStage);
   const availW = lightboxStage.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
   const availH = lightboxStage.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
@@ -153,6 +213,12 @@ function syncLightboxScale() {
   updateLightboxHint();
 }
 
+function preloadAdjacentFrames(work, index) {
+  if (!work || work.frames.length < 2) return;
+  if (index + 1 < work.frames.length) preloadAsset(work.frames[index + 1][0]);
+  if (index - 1 >= 0) preloadAsset(work.frames[index - 1][0]);
+}
+
 function syncLightboxFrame() {
   if (!activeWork) return;
   const [name, caption] = activeWork.frames[activeFrame];
@@ -166,9 +232,9 @@ function syncLightboxFrame() {
   lightboxNext.hidden = !multi;
   lightboxPrev.disabled = activeFrame === 0;
   lightboxNext.disabled = activeFrame === activeWork.frames.length - 1;
-  lightboxImage.alt = caption;
-  lightboxImage.src = asset(name);
-  if (lightboxImage.complete && lightboxImage.naturalWidth) syncLightboxScale();
+  lightboxZoom.hidden = true;
+  swapImage(lightboxImage, lightboxStage, name, caption, syncLightboxScale);
+  preloadAdjacentFrames(activeWork, activeFrame);
 }
 
 function openLightbox(trigger) {
@@ -184,14 +250,13 @@ function showFrame(index) {
   activeFrame = index;
   detailZoom.hidden = true;
   image.classList.remove("is-zoomable");
-  image.src = asset(name);
-  image.alt = caption;
   byId("detail-caption").textContent = caption;
   byId("detail-position").textContent = (index + 1) + " / " + activeWork.frames.length;
   byId("detail-pager").hidden = activeWork.frames.length < 2;
   previous.disabled = index === 0;
   next.disabled = index === activeWork.frames.length - 1;
-  if (image.complete && image.naturalWidth) syncDetailZoom();
+  swapImage(image, detailArt, name, caption, syncDetailZoom);
+  preloadAdjacentFrames(activeWork, index);
   if (lightbox.open) syncLightboxFrame();
 }
 
@@ -226,12 +291,10 @@ function openWork(work, trigger) {
   requestAnimationFrame(syncDetailZoom);
 }
 
-image.addEventListener("load", syncDetailZoom);
 image.addEventListener("click", () => {
   if (isDetailZoomable()) openLightbox(detailZoom);
 });
 detailZoom.addEventListener("click", () => openLightbox(detailZoom));
-lightboxImage.addEventListener("load", syncLightboxScale);
 lightboxZoom.addEventListener("click", () => setLightboxActual(!isActualSize));
 lightboxClose.addEventListener("click", () => lightbox.close());
 lightboxPrev.addEventListener("click", () => {
