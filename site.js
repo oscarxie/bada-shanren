@@ -94,7 +94,8 @@ function showWorks(type) {
     const image = new Image();
     image.alt = "";
     image.loading = "lazy";
-    image.src = asset(work.cover);
+    image.decoding = "async";
+    image.src = asset(work.thumb || work.cover);
     art.append(image);
     const copy = document.createElement("span");
     copy.className = "card-copy";
@@ -111,16 +112,19 @@ function showWorks(type) {
   byId("filter-status").textContent = "显示 " + selected.length + " 件作品";
 }
 
-filters.forEach((button) => button.addEventListener("click", () => {
-  filters.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
-  showWorks(button.dataset.filter);
-}));
+filters.forEach((button) => {
+  button.addEventListener("click", () => {
+    filters.forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+    showWorks(button.dataset.filter);
+  });
+});
 showWorks("全部");
 
 const dialog = byId("work-dialog");
 const detailArt = byId("detail-art");
 const image = byId("detail-image");
 const detailZoom = byId("detail-zoom");
+const detailFrames = byId("detail-frames");
 const previous = byId("detail-prev");
 const next = byId("detail-next");
 const lightbox = byId("lightbox-dialog");
@@ -245,6 +249,32 @@ function openLightbox(trigger) {
   requestAnimationFrame(syncLightboxScale);
 }
 
+function syncFrameButtons() {
+  if (detailFrames.hidden) return;
+  [...detailFrames.children].forEach((button, idx) => {
+    button.setAttribute("aria-pressed", String(idx === activeFrame));
+  });
+}
+
+function setWorkHash(workId) {
+  const target = "#work=" + encodeURIComponent(workId);
+  if (location.hash === target) return;
+  try {
+    history.replaceState(null, "", target);
+  } catch {
+    // Ignore history restrictions on non-standard protocols
+  }
+}
+
+function clearWorkHash() {
+  if (!location.hash.startsWith("#work=")) return;
+  try {
+    history.replaceState(null, "", location.pathname + location.search);
+  } catch {
+    // Ignore history restrictions on non-standard protocols
+  }
+}
+
 function showFrame(index) {
   const [name, caption] = activeWork.frames[index];
   activeFrame = index;
@@ -255,6 +285,7 @@ function showFrame(index) {
   byId("detail-pager").hidden = activeWork.frames.length < 2;
   previous.disabled = index === 0;
   next.disabled = index === activeWork.frames.length - 1;
+  syncFrameButtons();
   swapImage(image, detailArt, name, caption, syncDetailZoom);
   preloadAdjacentFrames(activeWork, index);
   if (lightbox.open) syncLightboxFrame();
@@ -285,9 +316,27 @@ function openWork(work, trigger) {
     extra.removeAttribute("href");
     extra.textContent = "";
   }
+  const showJump = work.frames.length >= 3;
+  detailFrames.hidden = !showJump;
+  if (showJump) {
+    const buttons = work.frames.map(([, caption], idx) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = String(idx + 1);
+      btn.title = caption;
+      btn.setAttribute("aria-label", caption);
+      btn.setAttribute("aria-pressed", String(idx === 0));
+      btn.addEventListener("click", () => showFrame(idx));
+      return btn;
+    });
+    detailFrames.replaceChildren(...buttons);
+  } else {
+    detailFrames.replaceChildren();
+  }
   showFrame(0);
-  dialog.showModal();
+  if (!dialog.open) dialog.showModal();
   dialog.scrollTop = 0;
+  setWorkHash(work.id);
   requestAnimationFrame(syncDetailZoom);
 }
 
@@ -381,14 +430,16 @@ window.addEventListener("resize", () => {
 });
 
 document.addEventListener("keydown", (event) => {
-  if (lightbox.open && !isActualSize && activeWork && activeWork.frames.length > 1) {
-    if (event.key === "ArrowLeft" && activeFrame > 0) {
-      event.preventDefault();
-      showFrame(activeFrame - 1);
-    } else if (event.key === "ArrowRight" && activeFrame < activeWork.frames.length - 1) {
-      event.preventDefault();
-      showFrame(activeFrame + 1);
-    }
+  if (!activeWork || activeWork.frames.length < 2) return;
+  const canStepLightbox = lightbox.open && !isActualSize;
+  const canStepDialog = dialog.open && !lightbox.open;
+  if (!canStepLightbox && !canStepDialog) return;
+  if (event.key === "ArrowLeft" && activeFrame > 0) {
+    event.preventDefault();
+    showFrame(activeFrame - 1);
+  } else if (event.key === "ArrowRight" && activeFrame < activeWork.frames.length - 1) {
+    event.preventDefault();
+    showFrame(activeFrame + 1);
   }
 });
 
@@ -412,4 +463,51 @@ dialog.addEventListener("click", (event) => {
     if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) dialog.close();
   }
 });
-dialog.addEventListener("close", () => opener?.focus({ preventScroll: true }));
+dialog.addEventListener("close", () => {
+  clearWorkHash();
+  opener?.focus({ preventScroll: true });
+});
+
+function syncWorkFromHash() {
+  if (!location.hash.startsWith("#work=")) {
+    if (dialog.open) dialog.close();
+    return;
+  }
+  const workId = decodeURIComponent(location.hash.slice(6));
+  const work = works.find((item) => item.id === workId);
+  if (!work) return;
+  if (dialog.open && activeWork?.id === work.id) return;
+  const fallbackTrigger = document.querySelector('[data-work="' + work.id + '"]');
+  openWork(work, fallbackTrigger);
+}
+window.addEventListener("hashchange", syncWorkFromHash);
+syncWorkFromHash();
+
+const backToTop = byId("back-to-top");
+function syncBackToTop() {
+  backToTop.hidden = window.scrollY < 600;
+}
+window.addEventListener("scroll", syncBackToTop, { passive: true });
+syncBackToTop();
+
+const navLinks = [...document.querySelectorAll('header nav a[href^="#"]')];
+const navSections = navLinks.map((link) => ({
+  link,
+  section: byId(link.getAttribute("href").slice(1)),
+})).filter((entry) => entry.section);
+
+if ("IntersectionObserver" in window && navSections.length) {
+  const visible = new Set();
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) visible.add(entry.target.id);
+      else visible.delete(entry.target.id);
+    });
+    const current = navSections.find((item) => visible.has(item.section.id));
+    navSections.forEach((item) => {
+      if (current && item === current) item.link.setAttribute("aria-current", "location");
+      else item.link.removeAttribute("aria-current");
+    });
+  }, { rootMargin: "-20% 0px -65% 0px", threshold: 0 });
+  navSections.forEach((item) => observer.observe(item.section));
+}
