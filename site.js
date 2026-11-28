@@ -61,15 +61,129 @@ showWorks("全部");
 
 const dialog = byId("work-dialog");
 const image = byId("detail-image");
+const detailZoom = byId("detail-zoom");
 const previous = byId("detail-prev");
 const next = byId("detail-next");
+const lightbox = byId("lightbox-dialog");
+const lightboxStage = byId("lightbox-stage");
+const lightboxImage = byId("lightbox-image");
+const lightboxCaption = byId("lightbox-caption");
+const lightboxPosition = byId("lightbox-position");
+const lightboxZoom = byId("lightbox-zoom");
+const lightboxClose = byId("lightbox-close");
+const lightboxNav = byId("lightbox-nav");
+const lightboxPrev = byId("lightbox-prev");
+const lightboxNext = byId("lightbox-next");
+const lightboxHint = byId("lightbox-hint");
 let activeWork;
 let activeFrame = 0;
 let opener;
+let lightboxOpener;
+let isActualSize = false;
+let canUseActual = false;
+
+function isDetailZoomable() {
+  if (!image.naturalWidth || !image.naturalHeight) return false;
+  if (Math.max(image.naturalWidth, image.naturalHeight) < 560) return false;
+  const rect = image.getBoundingClientRect();
+  if (!rect.width || !rect.height) return true;
+  return image.naturalWidth > rect.width * 1.12 || image.naturalHeight > rect.height * 1.12;
+}
+
+function syncDetailZoom() {
+  const zoomable = isDetailZoomable();
+  detailZoom.hidden = !zoomable;
+  image.classList.toggle("is-zoomable", zoomable);
+  if (zoomable) {
+    image.title = "点击放大细看";
+  } else {
+    image.removeAttribute("title");
+  }
+}
+
+function setLightboxActual(actual, anchor) {
+  isActualSize = actual && canUseActual;
+  lightboxStage.classList.toggle("is-actual", isActualSize);
+  lightboxZoom.setAttribute("aria-pressed", String(isActualSize));
+  lightboxZoom.textContent = isActualSize ? "适应屏幕" : "原寸 1:1";
+  updateLightboxHint();
+  if (!isActualSize) {
+    lightboxStage.scrollTo(0, 0);
+    return;
+  }
+  requestAnimationFrame(() => {
+    const maxX = Math.max(0, lightboxStage.scrollWidth - lightboxStage.clientWidth);
+    const maxY = Math.max(0, lightboxStage.scrollHeight - lightboxStage.clientHeight);
+    if (anchor) {
+      const targetX = anchor.rx * lightboxStage.scrollWidth - lightboxStage.clientWidth / 2;
+      const targetY = anchor.ry * lightboxStage.scrollHeight - lightboxStage.clientHeight / 2;
+      lightboxStage.scrollTo(Math.min(maxX, Math.max(0, targetX)), Math.min(maxY, Math.max(0, targetY)));
+    } else if (lightboxImage.naturalWidth / lightboxImage.naturalHeight >= 2.2) {
+      lightboxStage.scrollTo(maxX, maxY / 2);
+    } else {
+      lightboxStage.scrollTo(maxX / 2, Math.min(maxY, maxY * 0.2));
+    }
+  });
+}
+
+function updateLightboxHint() {
+  if (!canUseActual) {
+    lightboxHint.textContent = "已按原图尺寸显示";
+  } else if (isActualSize) {
+    lightboxHint.textContent = "原寸 1:1 · 拖拽或滑动细看，点击切回适应屏幕";
+  } else {
+    lightboxHint.textContent = "点击画面或按钮查看 1:1 原寸细节";
+  }
+}
+
+function syncLightboxScale() {
+  if (!lightbox.open || !lightboxImage.naturalWidth) return;
+  const style = getComputedStyle(lightboxStage);
+  const availW = lightboxStage.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+  const availH = lightboxStage.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+  canUseActual = lightboxImage.naturalWidth > availW * 1.05 || lightboxImage.naturalHeight > availH * 1.05;
+  lightboxStage.classList.toggle("can-actual", canUseActual);
+  lightboxZoom.hidden = !canUseActual;
+  if (!canUseActual && isActualSize) {
+    isActualSize = false;
+    lightboxStage.classList.remove("is-actual");
+  }
+  lightboxZoom.setAttribute("aria-pressed", String(isActualSize));
+  lightboxZoom.textContent = isActualSize ? "适应屏幕" : "原寸 1:1";
+  updateLightboxHint();
+}
+
+function syncLightboxFrame() {
+  if (!activeWork) return;
+  const [name, caption] = activeWork.frames[activeFrame];
+  isActualSize = false;
+  lightboxStage.classList.remove("is-actual", "can-actual", "is-dragging");
+  lightboxStage.scrollTo(0, 0);
+  lightboxCaption.textContent = activeWork.title + " · " + caption;
+  const multi = activeWork.frames.length > 1;
+  lightboxPosition.textContent = multi ? (activeFrame + 1) + " / " + activeWork.frames.length : "";
+  lightboxPrev.hidden = !multi;
+  lightboxNext.hidden = !multi;
+  lightboxPrev.disabled = activeFrame === 0;
+  lightboxNext.disabled = activeFrame === activeWork.frames.length - 1;
+  lightboxImage.alt = caption;
+  lightboxImage.src = asset(name);
+  if (lightboxImage.complete && lightboxImage.naturalWidth) syncLightboxScale();
+}
+
+function openLightbox(trigger) {
+  if (!activeWork) return;
+  lightboxOpener = trigger;
+  syncLightboxFrame();
+  lightbox.showModal();
+  requestAnimationFrame(syncLightboxScale);
+}
 
 function showFrame(index) {
   const [name, caption] = activeWork.frames[index];
   activeFrame = index;
+  detailZoom.hidden = true;
+  image.classList.remove("is-zoomable");
   image.src = asset(name);
   image.alt = caption;
   byId("detail-caption").textContent = caption;
@@ -77,7 +191,10 @@ function showFrame(index) {
   byId("detail-pager").hidden = activeWork.frames.length < 2;
   previous.disabled = index === 0;
   next.disabled = index === activeWork.frames.length - 1;
+  if (image.complete && image.naturalWidth) syncDetailZoom();
+  if (lightbox.open) syncLightboxFrame();
 }
+
 function openWork(work, trigger) {
   activeWork = work;
   opener = trigger;
@@ -106,7 +223,112 @@ function openWork(work, trigger) {
   showFrame(0);
   dialog.showModal();
   dialog.scrollTop = 0;
+  requestAnimationFrame(syncDetailZoom);
 }
+
+image.addEventListener("load", syncDetailZoom);
+image.addEventListener("click", () => {
+  if (isDetailZoomable()) openLightbox(detailZoom);
+});
+detailZoom.addEventListener("click", () => openLightbox(detailZoom));
+lightboxImage.addEventListener("load", syncLightboxScale);
+lightboxZoom.addEventListener("click", () => setLightboxActual(!isActualSize));
+lightboxClose.addEventListener("click", () => lightbox.close());
+lightboxPrev.addEventListener("click", () => {
+  if (activeFrame > 0) showFrame(activeFrame - 1);
+});
+lightboxNext.addEventListener("click", () => {
+  if (activeWork && activeFrame < activeWork.frames.length - 1) showFrame(activeFrame + 1);
+});
+
+let dragState = null;
+let suppressClick = false;
+lightboxStage.addEventListener("pointerdown", (event) => {
+  if (!isActualSize || event.pointerType !== "mouse" || event.button !== 0) return;
+  dragState = {
+    id: event.pointerId,
+    x: event.clientX,
+    y: event.clientY,
+    left: lightboxStage.scrollLeft,
+    top: lightboxStage.scrollTop,
+    moved: false,
+  };
+  lightboxStage.setPointerCapture(event.pointerId);
+});
+lightboxStage.addEventListener("pointermove", (event) => {
+  if (!dragState || event.pointerId !== dragState.id) return;
+  const dx = event.clientX - dragState.x;
+  const dy = event.clientY - dragState.y;
+  if (!dragState.moved && Math.hypot(dx, dy) > 5) {
+    dragState.moved = true;
+    lightboxStage.classList.add("is-dragging");
+  }
+  if (dragState.moved) {
+    lightboxStage.scrollLeft = dragState.left - dx;
+    lightboxStage.scrollTop = dragState.top - dy;
+  }
+});
+function endDrag(event) {
+  if (!dragState || event.pointerId !== dragState.id) return;
+  if (dragState.moved) suppressClick = true;
+  lightboxStage.classList.remove("is-dragging");
+  if (lightboxStage.hasPointerCapture(event.pointerId)) {
+    lightboxStage.releasePointerCapture(event.pointerId);
+  }
+  dragState = null;
+}
+lightboxStage.addEventListener("pointerup", endDrag);
+lightboxStage.addEventListener("pointercancel", endDrag);
+
+lightboxImage.addEventListener("click", (event) => {
+  if (suppressClick) {
+    suppressClick = false;
+    return;
+  }
+  if (!canUseActual) return;
+  if (isActualSize) {
+    setLightboxActual(false);
+  } else {
+    const rect = lightboxImage.getBoundingClientRect();
+    const rx = rect.width ? (event.clientX - rect.left) / rect.width : 0.5;
+    const ry = rect.height ? (event.clientY - rect.top) / rect.height : 0.5;
+    setLightboxActual(true, { rx, ry });
+  }
+});
+
+lightboxStage.addEventListener("click", (event) => {
+  if (suppressClick) {
+    suppressClick = false;
+    return;
+  }
+  if (event.target === lightboxStage && !isActualSize) {
+    lightbox.close();
+  }
+});
+
+lightbox.addEventListener("close", () => {
+  isActualSize = false;
+  lightboxStage.classList.remove("is-actual", "can-actual", "is-dragging");
+  lightboxOpener?.focus({ preventScroll: true });
+});
+
+window.addEventListener("resize", () => {
+  if (dialog.open) syncDetailZoom();
+  if (lightbox.open) syncLightboxScale();
+});
+
+document.addEventListener("keydown", (event) => {
+  if (lightbox.open && !isActualSize && activeWork && activeWork.frames.length > 1) {
+    if (event.key === "ArrowLeft" && activeFrame > 0) {
+      event.preventDefault();
+      showFrame(activeFrame - 1);
+    } else if (event.key === "ArrowRight" && activeFrame < activeWork.frames.length - 1) {
+      event.preventDefault();
+      showFrame(activeFrame + 1);
+    }
+  }
+});
+
 document.addEventListener("click", (event) => {
   const trigger = event.target.closest("[data-work]");
   if (!trigger) return;
