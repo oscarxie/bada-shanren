@@ -26,7 +26,7 @@ const works = [
     frames: lotusFrames, source: beijingPalaceMuseum + "paint/232837.html",
   },
   {
-    id: "river", type: "花鸟", title: "河上花图", cover: "river-b",
+    id: "river", type: "花鸟", title: "河上花图", cover: "river-b", thumb: "thumbs/river-b",
     meta: "1697 年 · 朱耷 · 纸本墨笔手卷 · 画心约 12.9 米 · 天津博物馆藏",
     summary: "几段水墨，把一池荷展开成一条长卷。",
     note: "手卷适合一段段展开。这里选取几处局部，看题材如何从荷叶与水面转入坡石，也可以在来源页查看整卷影像。",
@@ -36,7 +36,7 @@ const works = [
     extra: ["整卷影像 · Wikimedia Commons","https://commons.wikimedia.org/wiki/File:八大山人_河上花图.jpg"],
   },
   {
-    id: "crows", type: "花鸟", title: "枯木寒鸦图", cover: "crows",
+    id: "crows", type: "花鸟", title: "枯木寒鸦图", cover: "crows", thumb: "thumbs/crows",
     meta: "清 · 朱耷 · 纸本墨笔立轴 · 北京故宫博物院藏",
     summary: "四只寒鸦的姿态，由浓淡墨和枯枝托住。",
     note: "先离开画面一点距离，找四只鸟各自停在哪里。随后凑近看，它们的羽毛和脚下的枯枝用了不同的笔墨。",
@@ -45,7 +45,7 @@ const works = [
     source: beijingPalaceMuseum + "paint/228289.html",
   },
   {
-    id: "reeds", type: "花鸟", title: "芦雁图", cover: "reeds-geese",
+    id: "reeds", type: "花鸟", title: "芦雁图", cover: "reeds-geese", thumb: "thumbs/reeds-geese",
     meta: "清 · 朱耷 · 纸本墨笔立轴 · 221.5 × 114.2 厘米 · 北京故宫博物院藏",
     summary: "六只芦雁各有姿态，飞羽与背羽各有画法。",
     note: "六只芦雁分布在水岸和空中。看着飞雁展开的翅膀，再看岸边几只雁收紧身体，能读出一幅画里的动静变化。",
@@ -62,7 +62,7 @@ const works = [
     source: beijingPalaceMuseum + "paint/232546.html",
   },
   {
-    id: "fish-ducks", type: "花鸟", title: "鱼鸭图卷", cover: "fish-ducks-detail",
+    id: "fish-ducks", type: "花鸟", title: "鱼鸭图卷", cover: "fish-ducks-detail", thumb: "thumbs/fish-ducks-detail",
     meta: "1689 年 · 朱耷 · 纸本水墨手卷 · 纵 23.2 厘米、横 569.5 厘米 · 上海博物馆藏",
     summary: "看鱼、鸭和湖石怎样在一幅长卷里疏密相间。",
     note: "这卷画把鱼、鸭和湖石安排在同一水域。手卷可以分段看。跟着鱼的游向移动视线，再停下来找鸭和湖石，就能感到画里的动静变化。",
@@ -80,7 +80,7 @@ const works = [
     source: shanghaiMuseum + "CI00001029",
   },
   {
-    id: "shanghai-album", type: "花鸟", title: "书画册", cover: "shanghai-album-cover",
+    id: "shanghai-album", type: "花鸟", title: "书画册", cover: "shanghai-album-cover", thumb: "thumbs/shanghai-album-cover",
     meta: "1693 年 · 朱耷 · 纸本水墨册页 · 纵 24.4 厘米、横 23 厘米 · 上海博物馆藏",
     summary: "翻一开换一个题材，看看朱耷怎样重新分配墨色和空白。",
     note: "这册作品画了鱼、雏鸡、荷叶、竹、石等题材。每一开都有自己的疏密和重心，适合逐页比较。",
@@ -99,7 +99,7 @@ const works = [
     source: shanghaiMuseum + "CI00001028",
   },
   {
-    id: "rock-birds", type: "花鸟", title: "湖石双鸟图轴", cover: "rock-birds",
+    id: "rock-birds", type: "花鸟", title: "湖石双鸟图轴", cover: "rock-birds", thumb: "thumbs/rock-birds",
     meta: "1691 年 · 朱耷 · 纸本水墨立轴 · 纵 136 厘米、横 48.7 厘米 · 上海博物馆藏",
     summary: "两只小鸟停在不同高度，几道圆转的笔痕撑起湖石。",
     note: "把目光从石尖的小鸟移到石旁坡地，会发现另一只小鸟。两只鸟的位置让视线在细长的画面里上下移动。",
@@ -115,7 +115,7 @@ const works = [
     source: shanghaiMuseum + "CI00001032",
   },
   {
-    id: "fishing", type: "山水", title: "秋林独钓图", cover: "fishing",
+    id: "fishing", type: "山水", title: "秋林独钓图", cover: "fishing", thumb: "thumbs/fishing",
     meta: "约 1682 年 · 朱耷 · 纸本墨笔立轴 · 北京故宫博物院藏",
     summary: "一大片空白隔开两岸，「驴」字留下年代线索。",
     note: "近处枯树与远处淡山之间空出一段水面。北京故宫博物院根据「驴」的署款推定它画于 1682 年左右。",
@@ -128,7 +128,7 @@ const works = [
     source: beijingPalaceMuseum + "paint/232103.html",
   },
   {
-    id: "autumn-mountains", type: "山水", title: "秋山图轴", cover: "autumn-mountains",
+    id: "autumn-mountains", type: "山水", title: "秋山图轴", cover: "autumn-mountains", thumb: "thumbs/autumn-mountains",
     meta: "1694 年 · 朱耷 · 纸本水墨立轴 · 纵 182.8 厘米、横 49.3 厘米 · 上海博物馆藏",
     summary: "与《秋林独钓图》并看，比较两件山水立轴的层次。",
     note: "同样是窄幅立轴，《秋林独钓图》让一片白水隔开两岸，《秋山图轴》则可从层叠的山石和树木读起。两幅相隔十余年，适合对照朱耷怎样安排远近和疏密。",
@@ -144,7 +144,7 @@ const works = [
     source: shanghaiMuseum + "CI00001030",
   },
   {
-    id: "landscape-album", type: "山水", title: "山水图册（十二开）", cover: "met-landscape-01",
+    id: "landscape-album", type: "山水", title: "山水图册（十二开）", cover: "met-landscape-01", thumb: "thumbs/met-landscape-01",
     meta: "1699 年 · 朱耷 · 纸本水墨及设色册页 · 每开 18.7 × 23.2 厘米 · 大都会艺术博物馆藏",
     summary: "逐开看晚年山水，留意干笔、设色和偶尔出现的小人物。",
     note: "书稿称这件作品为《渴笔山水册》。一些册页以稀疏的构图、枯树、空亭和干笔让人想到倪瓒，有些则用山体的斜向叠置组织远近。翻开下一页，还可能遇到淡彩或点景人物。",
@@ -160,7 +160,7 @@ const works = [
     source: "https://www.metmuseum.org/art/collection/search/49145",
   },
   {
-    id: "calligraphy", type: "书法与手札", title: "西园雅集图记", cover: "calligraphy",
+    id: "calligraphy", type: "书法与手札", title: "西园雅集图记", cover: "calligraphy", thumb: "thumbs/calligraphy",
     meta: "1688 年 · 朱耷 · 纸本行书手卷 · 北京故宫博物院藏",
     summary: "看圆转的笔画，和字与字之间的呼吸。",
     note: "朱耷以行书抄录传为米芾所撰的《西园雅集图记》。从一截墨迹入手，就能看到他如何处理转折和行间空白。",
@@ -169,7 +169,7 @@ const works = [
     source: beijingPalaceMuseum + "handwriting/229917.html",
   },
   {
-    id: "lanting", type: "书法与手札", title: "行书《兰亭序》", cover: "lanting",
+    id: "lanting", type: "书法与手札", title: "行书《兰亭序》", cover: "lanting", thumb: "thumbs/lanting",
     meta: "清 · 朱耷 · 纸本行书立轴 · 174.5 × 52.1 厘米 · 北京故宫博物院藏",
     summary: "用自己的字形和章法，节录王羲之的旧文。",
     note: "朱耷节录王羲之《兰亭序》，也调整了个别文字，例如把「此地有」写成「此地迺」。读这件作品，可以同时看他怎样选文、用笔和安排字的位置。",
@@ -195,7 +195,7 @@ const works = [
     extra: ["十三通手札释文 · 北京故宫博物院","https://www.dpm.org.cn/lemmas/242844.html"],
   },
   {
-    id: "portrait", type: "人物", title: "个山小像", cover: "portrait",
+    id: "portrait", type: "人物", title: "个山小像", cover: "portrait", thumb: "thumbs/portrait",
     meta: "1674 年 · 黄安平绘，朱耷自题 · 纸本墨笔立轴 · 八大山人纪念馆藏",
     summary: "画中人是谁，答案写在画像四周。",
     note: "黄安平画下了戴笠着长袍的朱耷。画面四周有朱耷自题和友人所写的题跋，让这幅画像也成为一份传记材料。",
