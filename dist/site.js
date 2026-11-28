@@ -463,10 +463,18 @@ window.addEventListener("hashchange", syncWorkFromHash);
 syncWorkFromHash();
 
 const backToTop = byId("back-to-top");
+const siteFooter = document.querySelector(".site-footer");
+let footerVisible = false;
 function syncBackToTop() {
-  backToTop.hidden = window.scrollY < 600;
+  backToTop.hidden = window.scrollY < 600 || footerVisible;
 }
 window.addEventListener("scroll", syncBackToTop, { passive: true });
+if ("IntersectionObserver" in window && siteFooter) {
+  new IntersectionObserver((entries) => {
+    footerVisible = entries.some((entry) => entry.isIntersecting);
+    syncBackToTop();
+  }, { threshold: 0 }).observe(siteFooter);
+}
 syncBackToTop();
 
 const navLinks = [...document.querySelectorAll('header nav a[href^="#"]')];

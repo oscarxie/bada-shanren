@@ -47,7 +47,7 @@
 
 - [x] **P1-5 长页吸顶导航、当前栏目高亮与轻量回顶入口**
   - **涉及**：[dist/index.html](dist/index.html)、[dist/site.css](dist/site.css)、[dist/site.js](dist/site.js)
-  - **内容**：PC 与平板端启用半透明吸顶导航并调大 `.section { scroll-margin-top: 5.75rem }`、滚动自动高亮当前展厅栏目；手机端（`≤540px`）保持顶栏不吸顶节省阅读空间，同时全端滚过首屏后在右下角显示轻量「顶部」按钮。
+  - **内容**：PC 与平板端启用半透明吸顶导航并调大 `.section { scroll-margin-top: 5.75rem }`、滚动自动高亮当前展厅栏目（不显示多余浮动回顶按钮）；手机端（`≤540px`）保持顶栏不吸顶节省阅读空间，滚过首屏后显示右下角轻量「顶部」按钮，滚入页脚时自动隐藏避免与页脚「回到顶部」重复。
 
 ---
 
@@ -76,3 +76,4 @@
 | 2026-11-28 | **P0-3 / P0-4 / P0-5** | 1）**P0-3**：为详情弹窗、全屏放大层与「怎么看」三处切图加入 `swapImage` 令牌防乱序与 `.is-loading` 加载态（未命中缓存时先隐旧图并显示「图版加载中…」，解码后 160ms 淡入），并静默预加载相邻图版与「怎么看」5 帧（顺手将 `lookButtons` 改为读取 `dataset.look`）。<br>2）**P0-4**：将弹窗顶栏 `.dialog-bar` 设为 `position: sticky; top: 0` 并加实色宣纸底与分隔线，滚到底部可随时关闭。<br>3）**P0-5**：新增 `max-width: 820px` 断点使 `.dialog-layout` 单列展示，并将 `.looking-layout`、`.biography-layout`、`.seal-pair`、`.cipher` 提前在 `max-width: 760px` 切为单列。<br>4）已在本地 `http://127.0.0.1:4177/` 完成 PC（`1280×800`）、中屏平板（`680×900`）与手机（`390×844`）三端验证。 | `dist/site.css`、`dist/site.js` | 已推送并线上验收（`main`: `c53422c`，`gh-pages`: `d871721`） |
 | 2026-11-28 | **P1-1 / P1-2 / P1-4 / P1-5** | 1）**P1-1**：作品详情弹窗支持 `←`/`→` 键盘切图；3 图及以上作品新增数字页码直达条（含悬停图注提示）。<br>2）**P1-2**：为 12 张大封面生成 2× 轻量缩略图存入 `dist/assets/thumbs/`，14 张列表封面总流量由 `3,184 KB` 降至 `277 KB`（-91.3%），详情弹窗与放大层保持高清原图；全站懒加载图补齐 `decoding="async"`。<br>3）**P1-3**：按需求撤回，筛选栏保持纯文字不显示数字。<br>4）**P1-4**：支持 `#work=<id>` URL Hash 直达与关闭清理，并在 `<head>` 补齐 Open Graph / Twitter Card 社交分享标签。<br>5）**P1-5**：PC/平板启用半透明吸顶导航 + 滚动高亮当前栏目 + `scroll-margin-top: 5.75rem`；手机端保持顶栏非吸顶并配右下角轻量「顶部」浮标。<br>6）已在本地 `http://127.0.0.1:4177/` 完成 PC（`1280×800`）、平板（`680×900`）、手机（`390×844`）验证。 | `dist/index.html`、`dist/site.css`、`dist/site.js`、`dist/works.js`、`dist/assets/thumbs/*.webp`（12 张） | 已推送并线上验收（`main`: `20d7dfd`，`gh-pages`: `190ee8d`） |
 | 2026-11-28 | **P2-1 / P2-2 / P2-3 + P1-1 精简** | 1）**P1-1 精简（方案 A）**：移除弹窗内数字页码直达条，仅保留「上一图 / 下一图」与键盘 `←`/`→` 切图。<br>2）**P2-1**：删除页脚中的「本地版图版用于预览，出处见作品页与项目说明。」。<br>3）**P2-2**：统一「诞辰 400 周年」空格；《河上花图》与《鱼鸭图卷》简介补入“由右向左”展卷提示；两处台北故宫直接下载外链标注「（PDF）」。<br>4）**P2-3**：为 `new URL(work.source)` 增加 `try/catch` 容错。 | `dist/index.html`、`dist/site.css`、`dist/site.js`、`dist/works.js` | 已推送并线上验收（`main`: `aa4e017`，`gh-pages`: `b2e89d7`） |
+| 2026-11-28 | **P1-5 精简（方案 B）** | 浮动「顶部」按钮改为仅在手机端（`≤540px`）显示，PC/平板依靠吸顶导航不再显示浮标；同时通过 `IntersectionObserver` 监听 `.site-footer`，页脚进入视口时自动隐藏浮标，避免与页脚「回到顶部」重复。 | `dist/site.css`、`dist/site.js`、`CHANGELOG.md` | 已推送至 `main` 与 `gh-pages` |
