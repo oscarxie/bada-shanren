@@ -124,7 +124,6 @@ const dialog = byId("work-dialog");
 const detailArt = byId("detail-art");
 const image = byId("detail-image");
 const detailZoom = byId("detail-zoom");
-const detailFrames = byId("detail-frames");
 const previous = byId("detail-prev");
 const next = byId("detail-next");
 const lightbox = byId("lightbox-dialog");
@@ -249,13 +248,6 @@ function openLightbox(trigger) {
   requestAnimationFrame(syncLightboxScale);
 }
 
-function syncFrameButtons() {
-  if (detailFrames.hidden) return;
-  [...detailFrames.children].forEach((button, idx) => {
-    button.setAttribute("aria-pressed", String(idx === activeFrame));
-  });
-}
-
 function setWorkHash(workId) {
   const target = "#work=" + encodeURIComponent(workId);
   if (location.hash === target) return;
@@ -285,7 +277,6 @@ function showFrame(index) {
   byId("detail-pager").hidden = activeWork.frames.length < 2;
   previous.disabled = index === 0;
   next.disabled = index === activeWork.frames.length - 1;
-  syncFrameButtons();
   swapImage(image, detailArt, name, caption, syncDetailZoom);
   preloadAdjacentFrames(activeWork, index);
   if (lightbox.open) syncLightboxFrame();
@@ -306,7 +297,12 @@ function openWork(work, trigger) {
   byId("work-tips").replaceChildren(...tips);
   const source = byId("work-source");
   source.href = work.source;
-  const museum = museumNames.get(new URL(work.source).hostname);
+  let museum;
+  try {
+    museum = museumNames.get(new URL(work.source).hostname);
+  } catch {
+    museum = undefined;
+  }
   source.textContent = museum ? "查看" + museum + "藏品资料" : "查看馆方资料";
   const extra = byId("work-extra");
   extra.hidden = !work.extra;
@@ -315,23 +311,6 @@ function openWork(work, trigger) {
   } else {
     extra.removeAttribute("href");
     extra.textContent = "";
-  }
-  const showJump = work.frames.length >= 3;
-  detailFrames.hidden = !showJump;
-  if (showJump) {
-    const buttons = work.frames.map(([, caption], idx) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.textContent = String(idx + 1);
-      btn.title = caption;
-      btn.setAttribute("aria-label", caption);
-      btn.setAttribute("aria-pressed", String(idx === 0));
-      btn.addEventListener("click", () => showFrame(idx));
-      return btn;
-    });
-    detailFrames.replaceChildren(...buttons);
-  } else {
-    detailFrames.replaceChildren();
   }
   showFrame(0);
   if (!dialog.open) dialog.showModal();

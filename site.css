@@ -1027,36 +1027,6 @@ dialog.lightbox::backdrop {
   cursor: default;
 }
 
-.frame-jump {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .38rem;
-  margin-top: .65rem;
-}
-
-.frame-jump button {
-  min-width: 36px;
-  min-height: 36px;
-  padding: .2rem .55rem;
-  background: transparent;
-  border: 1px solid #c3baa9;
-  font-size: .84rem;
-  font-variant-numeric: tabular-nums;
-  color: var(--ink);
-}
-
-.frame-jump button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.frame-jump button[aria-pressed="true"] {
-  background: #39493d;
-  border-color: #39493d;
-  color: #fff7e8;
-  font-weight: 600;
-}
-
 .back-to-top {
   position: fixed;
   right: 1rem;
